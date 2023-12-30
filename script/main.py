@@ -1,8 +1,8 @@
 import streamlit as st
 
 def save_webhook(url):
-    with open('webhooks.txt', 'a+') as f:  # Open the file in append mode
-        f.write(url + ",")  # Write the new URL followed by a comma
+    with open('webhooks.txt', 'a+') as f: 
+        f.write(url + ",")  
 
 st.title('Discord Webhook Saver')
 st.write('Please enter your Discord webhook URL and submit to save it.')
