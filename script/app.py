@@ -31,17 +31,6 @@ def discord_webhook(webhook, listing):
     webhook.add_embed(embed)
     webhook.execute()
     
-def checkListing():
-    global currentListing
-    response = scrape(TEST_URL)
-    listings = len(response)
-
-    if listings > currentListing:
-        newListings = response[currentListing+1:]
-        currentListing = listings
-        for internship in newListings:
-            discord_webhook(webhook, internship)
-
 def readFile():
 
     with open('webhooks.txt', '+r') as f:
