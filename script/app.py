@@ -4,7 +4,6 @@ import time
 from dotenv import load_dotenv
 load_dotenv()
 
-
 MAIN_URL = "https://raw.githubusercontent.com/SimplifyJobs/Summer2024-Internships/dev/.github/scripts/listings.json"
 TEST_URL = "https://raw.githubusercontent.com/IshmamF/test/main/listings.json"
 webhook = "https://discord.com/api/webhooks/1190474499926270012/y51O2t3u0e2LasPRb0AkXUr5PiswNTITSqlCdnH3EhbO3ktOsHECEnrxlwZd6aFS91eA"
