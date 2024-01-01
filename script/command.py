@@ -1,75 +1,94 @@
 import requests
-import asyncio
 import random
-from dotenv import load_dotenv
-from discord.ext import commands
 import os
-from discord import Intents, Embed
+from discord.ext import commands
+from discord import Intents, Embed, ButtonStyle
+from discord.ui import Button, View
+from dotenv import load_dotenv
 
 load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 MAIN_URL = "https://raw.githubusercontent.com/SimplifyJobs/Summer2024-Internships/dev/.github/scripts/listings.json"
 
 intents = Intents.default()
-intents.messages = True
-intents.guilds = True
 intents.message_content = True
+
+bot = commands.Bot(command_prefix='$', intents=intents)
 
 def search_location(location, count):
     response = requests.get(MAIN_URL)
     internships = response.json()
-    active_internships = [internship for internship in internships if location.lower() in (place.lower() for place in internship['locations']) and internship['active']]
-    
-    if len(active_internships) <= count:
-        return active_internships
-    
-    return random.sample(active_internships, count)
-
-bot = commands.Bot(command_prefix='$', intents=intents)
+    active_internships = [internship for internship in internships if any(location.lower() in loc.lower() for loc in internship['locations']) and internship['active']]
+    return random.sample(active_internships, min(len(active_internships), count))
 
 @bot.command(name='find')
 async def find_internships(ctx, *args):
     search_query = ' '.join(args)
     await ctx.send("Please enter the number of internships you want to see:")
-
     def check(m):
         return m.author == ctx.author and m.channel == ctx.channel and m.content.isdigit()
-
     try:
         message = await bot.wait_for('message', check=check, timeout=60.0)
     except asyncio.TimeoutError:
         await ctx.send("You didn't reply in time, please try the command again.")
         return
-
     count = int(message.content)
+    internships = search_location(search_query, count)
+    if not internships:
+        await ctx.send(f"No internships found for {search_query}.")
+        return
+    page = 0
+    max_page = len(internships) - 1
+    def create_embed(internship, page, max_page):
+        embed = Embed(title=internship['title'],
+                      description=f"**Company:** {internship['company_name']}\n"
+                                  f"**Location:** {', '.join(internship['locations'])}\n"
+                                  f"**Sponsorship:** {internship['sponsorship']}",
+                      color=0xcd4fff)
+        embed.add_field(name="Apply", value=f"[Click here]({internship['url']})", inline=False)
+        embed.set_footer(text=f"Page {page+1} of {max_page+1}")
+        return embed
+    view = View()
+    previous_button = Button(style=ButtonStyle.primary, label='Previous', disabled=True)
+    next_button = Button(style=ButtonStyle.primary, label='Next', disabled=(max_page == 0))
+    if max_page == 0:
+        previous_button.disabled = True
+        next_button.disabled = True
+    async def previous_callback(interaction):
+        nonlocal page
+        if page > 0:
+            page -= 1
+            next_button.disabled = False
+            if page == 0:
+                previous_button.disabled = True
+            await interaction.response.edit_message(embed=create_embed(internships[page], page, max_page), view=view)
+    previous_button.callback = previous_callback
+    view.add_item(previous_button)
+    async def next_callback(interaction):
+        nonlocal page
+        if page < max_page:
+            page += 1
+            previous_button.disabled = False
+            if page == max_page:
+                next_button.disabled = True
+            await interaction.response.edit_message(embed=create_embed(internships[page], page, max_page), view=view)
+    next_button.callback = next_callback
+    view.add_item(next_button)
+    await ctx.send(embed=create_embed(internships[page], page, max_page), view=view)
 
-    try:
-        internships = search_location(search_query, count)
-        if not internships:
-            await ctx.send(f"No internships found for {search_query}.")
-            return
+@bot.event
+async def on_ready():
+    print(f'{bot.user} has connected to Discord!')
 
-        for internship in internships:
-            embed = Embed(title=internship['title'], 
-                          description=f"**Company:** {internship['company_name']}\n"
-                                      f"**Location:** {', '.join(internship['locations'])}\n"
-                                      f"**Sponsorship:** {internship['sponsorship']}",
-                          color=0x00ff00)
-            embed.add_field(name="Apply", value=f"[Click here]({internship['url']})", inline=False)
-            await ctx.send(embed=embed)
+bot.remove_command('help')
 
-    except Exception as e:
-        await ctx.send(f"An error occurred: {e}")
-
-bot.remove_command('help')  # This removes the default help command.
 @bot.command(name='help')
 async def help_command(ctx):
-    embed = Embed(title="Help - List of Commands", description="This Discord bot helps users find internship opportunities by searching a curated list of internships based on location. Use simple commands to get up-to-date internship listings and apply directly through provided links.", color=0x14de9b )
-    embed.add_field(name="$find [location]", value="Finds internships based on the location provided. Example: `$find san diego`", inline=False)
-    embed.add_field(name="$find [sponsorship]", value="Finds internships based on the if they have sponsorship avaialble or not", inline=False)
+    embed = Embed(title="Help - List of Commands",
+                  description="This Discord bot helps users find internship opportunities by searching a curated list of internships based on location.",
+                  color=0xcd4fff)
+    embed.add_field(name="$find [location]", value="Finds internships based on the location provided.", inline=False)
     embed.add_field(name="$help", value="Displays this help message.", inline=False)
-    
-    
     await ctx.send(embed=embed)
 
 bot.run(DISCORD_TOKEN)
