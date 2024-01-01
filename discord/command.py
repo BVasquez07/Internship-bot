@@ -71,9 +71,12 @@ async def help_command(ctx):
     embed = Embed(title="Help - List of Commands",
                   description="This Discord bot helps users find internship opportunities by searching a curated list of internships based on location.",
                   color=0xcd4fff)
-    embed.add_field(name="$find active", value="Finds internships that are active.", inline=False)
-    embed.add_field(name="$find [location]", value="Finds internships based on the location provided.", inline=False)
-    embed.add_field(name="$find sponsorship", value="Finds internships that offer sponsorship.", inline=False)
+    embed.add_field(name="$find active", value="Finds random internships that are active.", inline=False)
+    embed.add_field(name="$find [location]", value="Finds random internships based on the location provided.", inline=False)
+    embed.add_field(name="$find sponsorship", value="Finds random active internships that offer sponsorship.", inline=False)
+    embed.add_field(name="$recent active", value="Finds most recent internships that that are active.", inline=False)
+    embed.add_field(name="$recent [location]", value="Finds most recent internships based on the location provided.", inline=False)
+    embed.add_field(name="$recent sponsorship", value="Finds most recent internships that offer sponsorship.", inline=False)
     embed.add_field(name="$help", value="Displays this help message.", inline=False)
     await ctx.send(embed=embed)
 
