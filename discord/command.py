@@ -26,7 +26,7 @@ async def find_internships(ctx, *args):
         await ctx.send("You didn't reply in time, please try the command again.")
         return
     count = int(message.content)
-    internships = internFilter(search_query, count)
+    internships = internFilter(search_query, count, False)
     if not internships:
         await ctx.send(f"No internships found for {search_query}.")
         return
@@ -87,7 +87,7 @@ async def recent(ctx, location: str):
     try:
         msg = await bot.wait_for('message', check=check, timeout=30)
         count = int(msg.content)
-        internships = search_location(location, count)
+        internships = internFilter(location, count, True)
         if internships:
             page = 0
             max_page = len(internships) - 1
