@@ -23,11 +23,14 @@ def search_active(count):
     return random.sample(active_internships, count)
 
 def create_embed(internship, page, max_page):
+    sponsorship = internship['sponsorship']
+    locations = "\n".join(internship['locations']).strip()
+
     embed = Embed(title=internship['title'],
-                    description=f"**Company:** {internship['company_name']}\n"
-                                f"**Location:** {', '.join(internship['locations'])}\n"
-                                f"**Sponsorship:** {internship['sponsorship']}",
+                    description=f"**Company:** {internship['company_name']}",
                     color=0xcd4fff)
+    embed.add_field(name="Locations", value=locations, inline=True)
+    embed.add_field(name="Sponsorship", value=sponsorship, inline=True)
     embed.add_field(name="Apply", value=f"[Click here]({internship['url']})", inline=False)
     embed.set_footer(text=f"Page {page+1} of {max_page+1}")
     return embed

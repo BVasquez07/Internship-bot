@@ -5,13 +5,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 MAIN_URL = "https://raw.githubusercontent.com/SimplifyJobs/Summer2024-Internships/dev/.github/scripts/listings.json"
-TEST_URL = "https://raw.githubusercontent.com/IshmamF/test/main/listings.json"
 
 def scrape(URL):
 
     return requests.get(URL).json()
 
-currentListing = len(scrape(TEST_URL))
+currentListing = len(scrape(MAIN_URL))
 
 def discord_webhook(webhook, listing):
     locations = "\n".join(listing['locations']).strip()
@@ -26,8 +25,7 @@ def discord_webhook(webhook, listing):
     embed.set_timestamp()
     embed.add_embed_field(name="Locations", value=locations)
     embed.add_embed_field(name='Sponsorship', value=sponsorBool)
-    embed.add_embed_field(name='Link:', value=listing['url'], inline=False)
-
+    embed.add_embed_field(name="Apply", value=f"[Click here]({listing['url']})", inline=False)
     webhook.add_embed(embed)
     webhook.execute()
     
@@ -40,10 +38,11 @@ def readFile():
             return data.split(',')
         else:
             print("No Webhooks")
-print(scrape(TEST_URL))
+webhook = "https://discord.com/api/webhooks/1190474499926270012/y51O2t3u0e2LasPRb0AkXUr5PiswNTITSqlCdnH3EhbO3ktOsHECEnrxlwZd6aFS91eA"
+discord_webhook(webhook, scrape(MAIN_URL)[1])
 while True:
     
-    response = scrape(TEST_URL)
+    response = scrape(MAIN_URL)
     listings = len(response)
 
     if listings > currentListing:
