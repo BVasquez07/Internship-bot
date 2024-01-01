@@ -15,13 +15,13 @@ def search_sponsorship(count):
     internships = requests.get(MAIN_URL).json()
     active_internships = [internship for internship in internships if "Offers Sponsorship" == internship['sponsorship'] and internship['active']]
 
-    return random.sample(active_internships, count)
+    return random.sample(active_internships, min(len(active_internships), count))
 
 def search_active(count):
     internships = requests.get(MAIN_URL).json()
     active_internships = [internship for internship in internships if internship['active']]
 
-    return random.sample(active_internships, count)
+    return random.sample(active_internships, min(len(active_internships), count))
 
 def create_embed(internship, page, max_page):
     sponsorship = internship['sponsorship']
@@ -57,15 +57,15 @@ def recent_sponsorship(count):
     internships = requests.get(MAIN_URL).json()
     active_internships = [internship for internship in internships if "Offers Sponsorship" == internship['sponsorship'] and internship['active']]
 
-    return sorted(active_internships, key=lambda k: k.get('date_posted', 0), reverse=True)[:count]
+    return sorted(active_internships, key=lambda k: k.get('date_posted', 0), reverse=True)[:min(len(active_internships), count)]
 
 def recent_active(count):
     internships = requests.get(MAIN_URL).json()
     active_internships = [internship for internship in internships if internship['active']]
 
-    return sorted(active_internships, key=lambda k: k.get('date_posted', 0), reverse=True)[:count]
+    return sorted(active_internships, key=lambda k: k.get('date_posted', 0), reverse=True)[:min(len(active_internships), count)]
 
 def recent_location(location, count):
     internships = requests.get(MAIN_URL).json()
     active_internships = [internship for internship in internships if any(location.lower() in loc.lower() for loc in internship['locations']) and internship['active']]
-    return sorted(active_internships, key=lambda k: k.get('date_posted', 0), reverse=True)[:count]
+    return sorted(active_internships, key=lambda k: k.get('date_posted', 0), reverse=True)[:min(len(active_internships), count)]
