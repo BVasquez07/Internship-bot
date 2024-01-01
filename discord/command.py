@@ -1,6 +1,7 @@
 import requests
 import random
 import os
+import asyncio
 from discord.ext import commands
 from discord import Intents, Embed, ButtonStyle
 from discord.ui import Button, View
@@ -21,6 +22,18 @@ def search_location(location, count):
     active_internships = [internship for internship in internships if any(location.lower() in loc.lower() for loc in internship['locations']) and internship['active']]
     return random.sample(active_internships, min(len(active_internships), count))
 
+def search_sponsorship(count):
+    internships = requests.get(MAIN_URL).json()
+    active_internships = [internship for internship in internships if "Offers Sponsorship" == internship['sponsorship'] and internship['active']]
+
+    return random.sample(active_internships, count)
+
+def search_active(count):
+    internships = requests.get(MAIN_URL).json()
+    active_internships = [internship for internship in internships if internship['active']]
+
+    return random.sample(active_internships, count)
+
 @bot.command(name='find')
 async def find_internships(ctx, *args):
     search_query = ' '.join(args)
@@ -33,7 +46,12 @@ async def find_internships(ctx, *args):
         await ctx.send("You didn't reply in time, please try the command again.")
         return
     count = int(message.content)
-    internships = search_location(search_query, count)
+    if search_query == 'sponsorship':
+        internships = search_sponsorship(count)
+    elif search_query == 'active':
+        internships = search_active(count)
+    else:
+        internships = search_location(search_query, count)
     if not internships:
         await ctx.send(f"No internships found for {search_query}.")
         return
@@ -87,7 +105,9 @@ async def help_command(ctx):
     embed = Embed(title="Help - List of Commands",
                   description="This Discord bot helps users find internship opportunities by searching a curated list of internships based on location.",
                   color=0xcd4fff)
+    embed.add_field(name="$find active", value="Finds internships that are active.", inline=False)
     embed.add_field(name="$find [location]", value="Finds internships based on the location provided.", inline=False)
+    embed.add_field(name="$find sponsorship", value="Finds internships that offer sponsorship.", inline=False)
     embed.add_field(name="$help", value="Displays this help message.", inline=False)
     await ctx.send(embed=embed)
 
