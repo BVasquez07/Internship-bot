@@ -77,4 +77,50 @@ async def help_command(ctx):
     embed.add_field(name="$help", value="Displays this help message.", inline=False)
     await ctx.send(embed=embed)
 
+
+#recent [location] with pagination, adding this comment as im just rushing this and it may be confusing 
+@bot.command(name='recent')
+async def recent(ctx, location: str):
+    await ctx.send('How many internships would you like to view?')
+    def check(msg):
+        return msg.author == ctx.author and msg.channel == ctx.channel
+    try:
+        msg = await bot.wait_for('message', check=check, timeout=30)
+        count = int(msg.content)
+        internships = search_location(location, count)
+        if internships:
+            page = 0
+            max_page = len(internships) - 1
+            view = View()
+            previous_button = Button(style=ButtonStyle.primary, label='Previous', disabled=True)
+            next_button = Button(style=ButtonStyle.primary, label='Next', disabled=(max_page == 0))
+            async def previous_callback(interaction):
+                nonlocal page
+                if page > 0:
+                    page -= 1
+                    next_button.disabled = False
+                    if page == 0:
+                        previous_button.disabled = True
+                    await interaction.response.edit_message(embed=create_embed(internships[page], page, max_page), view=view)
+            async def next_callback(interaction):
+                nonlocal page
+                if page < max_page:
+                    page += 1
+                    previous_button.disabled = False
+                    if page == max_page:
+                        next_button.disabled = True
+                    await interaction.response.edit_message(embed=create_embed(internships[page], page, max_page), view=view)
+            previous_button.callback = previous_callback
+            next_button.callback = next_callback
+            view.add_item(previous_button)
+            view.add_item(next_button)
+            await ctx.send(embed=create_embed(internships[page], page, max_page), view=view)
+        else:
+            await ctx.send(f"No active internships found for {location}.")
+    except ValueError:
+        await ctx.send("Please enter a valid number.")
+    except asyncio.TimeoutError:
+        await ctx.send("Sorry, you didn't reply in time!")
+
+
 bot.run(DISCORD_TOKEN)
