@@ -38,8 +38,7 @@ def readFile():
             return data.split(',')
         else:
             print("No Webhooks")
-webhook = "https://discord.com/api/webhooks/1190474499926270012/y51O2t3u0e2LasPRb0AkXUr5PiswNTITSqlCdnH3EhbO3ktOsHECEnrxlwZd6aFS91eA"
-discord_webhook(webhook, scrape(MAIN_URL)[1])
+
 while True:
     
     response = scrape(MAIN_URL)
