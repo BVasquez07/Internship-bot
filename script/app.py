@@ -40,7 +40,7 @@ def readFile():
             return data.split(',')
         else:
             print("No Webhooks")
-
+print(scrape(TEST_URL))
 while True:
     
     response = scrape(TEST_URL)
