@@ -29,7 +29,7 @@ Welcome to the Internship Bot repository! This Discord bot is written in Python 
 
  4. **Set Up Configurations:**
     ```bash
-    pip install [enter requirement]
+   pip install [enter requirement]
 
   ### Running The Bot
   Execute python bot.py in the terminal.
