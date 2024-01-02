@@ -23,11 +23,11 @@ Welcome to the Internship Bot repository! This Discord bot is written in Python 
    ```bash
    cd Internship-bot
 
-3. ** Instal Dependencies:**
+3. **Install Dependencies:**
    ```bash
   pip install -r requirements.txt
 
- 4. ** Set Up Configurations:**
+ 4. **Set Up Configurations:**
     ```bash
     pip install [enter requirement]
 
