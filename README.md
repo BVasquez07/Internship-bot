@@ -3,6 +3,7 @@
 Welcome to the Internship Bot repository! This Discord bot is written in Python and designed to assist users in finding internships by scraping various websites for the latest opportunities. The bot can be run locally for development or added to your Discord server using the provided link.
 
 Add to your discord server: [Link](https://discord.com/api/oauth2/authorize?client_id=1128113900332785725&permissions=274877983808&scope=applications.commands+bot)
+Demo Video for Script: [Youtube](https://youtu.be/ZTa-BxjBkMA?si=m7bUAuUmKeQvfPOv)
 
 ## Features
 - **Automated Internship Listings**: Retrieves and sorts the latest internship postings from a specified JSON source.
