@@ -7,6 +7,10 @@ Welcome to the Internship Bot repository! This Discord bot is written in Python 
 - **Customizable Searches**: Users can search for internships based on location, active status, and sponsorship offerings.
 - **Interactive Discord Responses**: Paginated and detailed responses for easy viewing directly within Discord.
 
+## Technologies
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)
+
 ## Getting Started
 
 ### Prerequisites
